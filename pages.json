@@ -1,14 +1,55 @@
 {
-	"pages": [{
-		"path": "pages/index/index",
-		"style": {
-			"navigationBarTitleText": "uni-ui基础项目"
-		}
-	}],
-	"globalStyle": {
+	"pages": [
+        {
+            "path" : "pages/home/home",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/me/me",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/order/order",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/ordering/ordering",
+            "style" : {}
+        }
+    ],
+ "tabBar":{
+    "selectedColor": "#4a90e2",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "static/tab_icons/home.png",
+        "selectedIconPath": "static/tab_icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/ordering/ordering",
+        "text": "点餐",
+        "iconPath": "static/tab_icons/ordering.png",
+        "selectedIconPath": "static/tab_icons/ordering-active.png"
+      },
+      {
+        "pagePath": "pages/order/order",
+        "text": "订单",
+        "iconPath": "static/tab_icons/order.png",
+        "selectedIconPath": "static/tab_icons/order-active.png"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的",
+        "iconPath": "static/tab_icons/me.png",
+        "selectedIconPath": "static/tab_icons/me-active.png"
+      }
+    ]
+  },
+  "globalStyle": {
 		"navigationBarTextStyle": "white",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#007AFF",
+		"navigationBarTitleText": "顶呱呱火锅",
+		"navigationBarBackgroundColor": "#4a90e2",
 		"backgroundColor": "#FFFFFF"
 	}
 }
