@@ -2,22 +2,42 @@
 	"pages": [
         {
             "path" : "pages/home/home",
-            "style" : {}
+            "style" : {
+              "navigationStyle":"custom"
+            }
         }
         ,{
             "path" : "pages/me/me",
-            "style" : {}
+            "style" : {
+              "navigationBarTitleText": "个人中心"
+            }
         }
         ,{
             "path" : "pages/order/order",
-            "style" : {}
+            "style" : {
+              "navigationBarTitleText": "我的订单"
+            }
         }
         ,{
             "path" : "pages/ordering/ordering",
-            "style" : {}
+            "style" : {
+              // "navigationBarTitleText": "点餐",
+              "navigationStyle":"custom",
+              "navigationBarBackgroundColor":"#FFFFFF"
+            }
         }
     ],
- "tabBar":{
+  "subPackages":[
+    {
+      "root":"subpkg",
+      "pages":[{
+                    "path" : "goods_detail/goods_detail",
+                    "style" : {}
+                }
+            ]
+    }
+  ],  
+  "tabBar":{
     "selectedColor": "#4a90e2",
     "list": [
       {
@@ -47,9 +67,15 @@
     ]
   },
   "globalStyle": {
-		"navigationBarTextStyle": "white",
+    "navigationStyle": "custom",
+		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "顶呱呱火锅",
-		"navigationBarBackgroundColor": "#4a90e2",
-		"backgroundColor": "#FFFFFF"
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#CCCCCC",
+    "backgroundTextStyle":"dark",
+    "usingComponents":{
+      "van-button": "/wxcomponents/vant/dist/button/index"
+      
+    }
 	}
 }
