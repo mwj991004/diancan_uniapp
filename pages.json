@@ -26,12 +26,21 @@
               "navigationBarBackgroundColor":"#FFFFFF"
             }
         }
+        
     ],
   "subPackages":[
     {
       "root":"subpkg",
       "pages":[{
                     "path" : "goods_detail/goods_detail",
+                    "style" : {}
+                }
+                ,{
+                    "path" : "search/search",
+                    "style" : {}
+                }
+                ,{
+                    "path" : "pay/pay",
                     "style" : {}
                 }
             ]
@@ -67,14 +76,19 @@
     ]
   },
   "globalStyle": {
-    "navigationStyle": "custom",
+    // "navigationStyle": "custom",
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "顶呱呱火锅",
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#CCCCCC",
     "backgroundTextStyle":"dark",
     "usingComponents":{
-      "van-button": "/wxcomponents/vant/dist/button/index"
+      "van-button": "/wxcomponents/vant/dist/button/index",
+      "van-popup": "/wxcomponents/vant/dist/popup/index",
+      "van-cell": "/wxcomponents/vant/dist/cell/index",
+      "van-cell-group": "/wxcomponents/vant/dist/cell-group/index",
+      "van-icon": "/wxcomponents/vant/dist/icon/index"
+      
       
     }
 	}

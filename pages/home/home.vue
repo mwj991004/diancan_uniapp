@@ -59,9 +59,14 @@
 </template>
 
 <script>
+  // 导入自己封装的 mixin 模块
+  import badgeMix from '@/mixins/tabbar-badge.js'
+  
   import { mapState,mapMutations } from 'vuex'
   
 	export default {
+    // 将 badgeMix 混入到当前的页面中进行使用
+    mixins: [badgeMix],
 		data() {
 			return {
 				// 1. 轮播图的数据列表，默认为空数组
@@ -80,7 +85,7 @@
          this.swiperList = res
        })
        //调取推荐列表的数据
-       uni.$api.home.getbannerData().then(res => {
+       uni.$api.home.getBannerData().then(res => {
          this.bannerList = res
        })
      },

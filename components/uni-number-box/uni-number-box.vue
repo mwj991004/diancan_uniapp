@@ -1,9 +1,12 @@
 <template>
 	<view class="uni-numbox">
-		<view @click="_calcValue('minus')" class="uni-numbox__minus">
-			<text class="uni-numbox--text" :class="{ 'uni-numbox--disabled': inputValue <= min || disabled }">-</text>
+		<view @click="_calcValue('minus')" class="uni-numbox__minus" :style="{visibility:(inputValue == 0 ? 'hidden':'visible')}">
+			<text class="uni-numbox--text" :class="{ 'uni-numbox--disabled': inputValue <= min || disabled }" >-</text>
 		</view>
-		<input :disabled="disabled" @blur="_onBlur" class="uni-numbox__value" type="number" v-model="inputValue" />
+    <view :disabled="disabled" @blur="_onBlur" class="uni-numbox__value" type="number" v-model="inputValue" :style="{visibility:(inputValue == 0 ? 'hidden':'visible')}">
+      {{inputValue}}
+    </view>
+		<!-- <input :disabled="disabled" @blur="_onBlur" class="uni-numbox__value" type="number" v-model="inputValue" /> -->
 		<view @click="_calcValue('plus')" class="uni-numbox__plus">
 			<text class="uni-numbox--text" :class="{ 'uni-numbox--disabled': inputValue >= max || disabled }">+</text>
 		</view>
@@ -54,6 +57,7 @@
 		watch: {
 			value(val) {
 				this.inputValue = +val;
+       
 			},
 			inputValue(newVal, oldVal) {
 				if (+newVal !== +oldVal) {
@@ -126,22 +130,24 @@
 		display: flex;
 		/* #endif */
 		flex-direction: row;
-		height: 35px;
-		line-height: 35px;
-		width: 120px;
+    justify-content: space-between;
+		height: 25px;
+		line-height: 25px;
+		width: 80px;
 	}
 
 	.uni-numbox__value {
 		background-color: #ffffff;
-		width: 40px;
-		height: 35px;
+		width: 30px;
+		height: 25px;
 		text-align: center;
 		font-size: 32rpx;
-		border-width: 1rpx;
-		border-style: solid;
-		border-color: #e5e5e5;
+		/* border-width: 1rpx; */
+		/* border-style: solid; */
+		/* border-color: #e5e5e5; */
 		border-left-width: 0;
 		border-right-width: 0;
+    /* visibility: ; */
 	}
 
 	.uni-numbox__minus {
@@ -151,8 +157,8 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-		width: 35px;
-		height: 35px;
+		width: 25px;
+		height: 25px;
 		/* line-height: $box-line-height;
  */
 		/* text-align: center;
@@ -163,9 +169,11 @@
 		border-width: 1rpx;
 		border-style: solid;
 		border-color: #e5e5e5;
-		border-top-left-radius: 6rpx;
-		border-bottom-left-radius: 6rpx;
-		border-right-width: 0;
+    border-radius: 20rpx;
+    /* visibility: hidden; */
+/* 		border-top-left-radius: 6rpx;
+		border-bottom-left-radius: 6rpx; */
+		/* border-right-width: 0; */
 	}
 
 	.uni-numbox__plus {
@@ -175,15 +183,16 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-		width: 35px;
-		height: 35px;
+		width: 25px;
+		height: 25px;
 		border-width: 1rpx;
 		border-style: solid;
 		border-color: #e5e5e5;
-		border-top-right-radius: 6rpx;
-		border-bottom-right-radius: 6rpx;
+    border-radius: 20rpx;
+		/* border-top-right-radius: 6rpx; */
+		/* border-bottom-right-radius: 6rpx; */
 		background-color: #f8f8f8;
-		border-left-width: 0;
+		/* border-left-width: 0; */
 	}
 
 	.uni-numbox--text {

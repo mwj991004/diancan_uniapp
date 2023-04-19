@@ -15,7 +15,7 @@ export default  {
   },
   
   //获取推荐列表数据的api
-  async  getbannerData(){
+  async  getBannerData(){
     const { data: res } = await $http.get('/miniprogram/api/home/bannerdata')
    // 3.2 请求失败
     if (res.meta.status !== 200) {

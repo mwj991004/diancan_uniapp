@@ -32,8 +32,11 @@
 	 * @property {Boolean} circle = [true|false] 是否为圆角
 	 * @event {Function} click 点击 Tag 触发事件
 	 */
-
+  
 	export default {
+    options: {
+        styleIsolation: 'isolated'
+    },
 		name: "UniTag",
 		props: {
 			type: {
@@ -116,9 +119,9 @@
 	}
 
 	.uni-tag--small {
-		height: 20px;
+		height: 18px;
 		padding: 0px 8px;
-		line-height: 20px;
+		line-height: 18px;
 		font-size: 24rpx;
 	}
 
@@ -154,10 +157,10 @@
 
 	.uni-tag--primary {
 		color: #fff;
-		background-color: #007aff;
+		background-color: #4a90e2;
 		border-width: 1rpx;
 		border-style: solid;
-		border-color: #007aff;
+		border-color: #4a90e2;
 	}
 
 	.primary-uni-tag--inverted {
