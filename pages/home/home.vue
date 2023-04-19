@@ -4,7 +4,7 @@
     <swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
       <!-- 循环渲染轮播图的 item 项 -->
       <swiper-item v-for="(item, i) in swiperList" :key="i">
-        <navigator class="swiper-item" :url="'/subpkg/goods_detail/goods_detail?goods_id=' + item.goods_id">
+        <navigator class="swiper-item" :url="'/pages/ordering/ordering?goods_id=' + item.goods_id+'&cate_id='+item.cate_id" open-type="reLaunch">
           <!-- 动态绑定图片的 src 属性 -->
           <image :src="item.image_src" mode="scaleToFill"></image>
         </navigator>
@@ -44,7 +44,7 @@
       <!-- 内容 -->
       <view class="banner-list">
         <view class="banner-item" v-for="(item,index) in bannerList" :key="item.goods_id">
-          <navigator class="banner-nav" :url="'/subpkg/goods_detail/goods_detail?goods_id=' + item.goods_id">
+          <navigator class="banner-nav" :url="'/pages/ordering/ordering?goods_id=' + item.goods_id+'&cate_id='+item.cate_id" open-type="reLaunch">
             <view  class="iconfont icon-first" style="color:#ffd700;" v-if="index === 0"></view>
             <view  class="iconfont icon-second" style="color:#E6E8FA;" v-else-if="index === 1"></view>
             <view  class="iconfont icon-third" style="color:#b87333;" v-else="index === 2"></view>

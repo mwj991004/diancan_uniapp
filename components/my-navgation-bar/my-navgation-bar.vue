@@ -37,9 +37,11 @@
           this.updateConsumptionMethod(str)
        },
        //搜索盒子的点击事件处理函数
-       searchHandler(){
-         console.log('搜索')
-       }
+      searchHandler(){
+        uni.navigateTo({
+          url: '/subpkg/search/search'
+        })
+      }
     },
     props: {
      // defaultData（父页面传递的数据-就是引用组件的页面）

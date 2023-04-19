@@ -26,11 +26,15 @@
           <!-- 商品列表内容-->
           <view class="goods-list" >
             <!-- 商品item项 -->
-            <view v-for="(item3,i3) in goodsInfoList " :key="i3"  @click.stop="gotoGoodsDetail(item3)" v-if="item3.cate_id === item2.id ? true : false ">
+            <view v-for="(item3,i3) in goodsInfoList " :key="i3" :id="'scroll-' + i2 + '-' + i3"   v-if="item3.cate_id === item2.id ? true : false ">
               <!-- 为 my-goods 组件动态绑定 goods 属性的值 -->
               <my-goods :goods="item3"  @num-change="numberChangeHandler"></my-goods>
             </view>
           </view>
+        </view>
+        <!-- 空白盒子，让最后一个分类盒子也能往上滚 -->
+        <view class="right-scroll-view-item" style="height: 200px;">
+          
         </view>
       </scroll-view> 
     </view>
@@ -53,7 +57,7 @@
     // 将 badgeMix 混入到当前的页面中进行使用
     mixins: [badgeMix],
     watch: {
-      
+       
     },
 		data() {
 			return {
@@ -65,13 +69,14 @@
         wh: 0, 
         // 当前选中项的索引，默认让第一项被选中
         active: 0,
-        rightCur: 0, // 用于实现左边联动右边
+        rightCur: 5, // 用于实现左边联动右边
         //分类栏滚动位置
         cateScrollTops:0,
         //商品分类数据
         goodsCateList: [],
         //商品列表数据
-        goodsInfoList:[]
+        goodsInfoList:[],
+
       } 
     },
     computed: {
@@ -134,7 +139,11 @@
       },
       
     },
-    onLoad() {
+    onLoad(options) {
+      
+      if(options){
+        // this.rightCur = options.cate_id+'-'options.goods_id
+      }
       // 获取当前系统的信息
       const sysInfo = uni.getSystemInfoSync()
       //获取胶囊布局信息

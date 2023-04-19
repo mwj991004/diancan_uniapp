@@ -23,4 +23,15 @@ export default  {
     // 3.3 请求成功，返回数据
     return res.message
   },
+  //根据关键词查询商品的接口
+  async getSearchListData(kw){
+    const {data:res} = await $http.get('/miniprogram/api/ordering/goodssearchdata', { name: kw })
+    if (res.meta.status !== 200) {
+      uni.$showMsg()
+      return
+    }
+    // 3.3 请求成功，返回数据
+    return res.message
+    
+  },
 }

@@ -1,9 +1,9 @@
-<template>
-	<view>
+<template >
+	<view v-if="total">
 		<!-- 购物车模块 -->
 		  <view class="goods-cart">
 		    <!-- 单元格行 -->
-		    <van-cell custom-class="goods-cart-cell" value-class="cart-cell-right" v-if="total">
+		    <van-cell custom-class="goods-cart-cell" value-class="cart-cell-right" >
 		      <!-- 左侧购物车盒子 -->
 		      <view class="cart-cell-left" slot="title">
 		        <!-- 购物车图标 -->

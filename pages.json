@@ -31,7 +31,8 @@
   "subPackages":[
     {
       "root":"subpkg",
-      "pages":[{
+      "pages":[
+            {
                     "path" : "goods_detail/goods_detail",
                     "style" : {}
                 }
