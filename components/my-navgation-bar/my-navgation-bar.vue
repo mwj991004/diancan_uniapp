@@ -4,13 +4,18 @@
 		<view class="nav-bar" :style="{height:navBarHeight +'px'}">
       <!-- 内容 -->
       <view class="navbar-content" :style="{height:menuHeight + 'px', minHeight:menuHeight + 'px',  lineHeight:menuHeight+ 'px', left:menuRight+ 'px', top:menuTop + 'px'}">
+        
         <!-- 按钮区域 -->
-        <view class="btn-box" :style="{'--btnBoxShadow':btnBoxShadow}">
+        <view class="btn-box" :style="{'--btnBoxShadow':btnBoxShadow}" v-if="showButton">
           <van-button  :custom-class="[consumptionMethod === 'tangsi' ?'van-btn active' : 'van-btn']"  class="van-button"  type="primary"  size="small" @click="activeItem('tangsi')"  round >堂食</van-button>
           <van-button  :custom-class="[consumptionMethod === 'waimai' ?'van-btn active' : 'van-btn']" class="van-button"  type="primary" size="small" @click="activeItem('waimai')" round >外卖</van-button>
         </view>
+        <!-- 标题文本区域 -->
+        <view class="title-box" v-if="showTitle">
+          <text :style="{'color':defaultData.color,'fontSize':defaultData.fontSize+'px','fontWeight':defaultData.fontWeight}">{{defaultData.title}}</text>
+        </view>
         <!-- 搜索图标 -->
-        <uni-icons type="search" class="search" size="24" @click="searchHandler"></uni-icons>
+        <uni-icons type="search" class="search" size="24" @click="searchHandler" v-if="showSearch"></uni-icons>
       </view>
       
 		</view>
@@ -25,18 +30,20 @@
   import { mapState,mapMutations } from 'vuex'
   const app = getApp()
 	export default {
+    //组件配置，解除组件的样式隔离
     options: { styleIsolation: 'shared' },  
     computed: {
+      //导入store中的consumptionMethod数据
         ...mapState('m_home', ['consumptionMethod'])
     },
     methods:{
-        //导入store中修改consumptionMethod数据的方法
-        ...mapMutations('m_home', ['updateConsumptionMethod']),
-        //选择项切换时的处理函数，堂食或外卖
-       activeItem(str){
-          this.updateConsumptionMethod(str)
-       },
-       //搜索盒子的点击事件处理函数
+      //导入store中修改consumptionMethod数据的方法
+      ...mapMutations('m_home', ['updateConsumptionMethod']),
+      //按钮选择项切换时的处理函数，堂食或外卖
+      activeItem(str){
+         this.updateConsumptionMethod(str)
+      },
+      //搜索盒子的点击事件处理函数
       searchHandler(){
         uni.navigateTo({
           url: '/subpkg/search/search'
@@ -49,9 +56,26 @@
         type: Object,
         default: {
           title: "我是默认标题",
-          "h1":"666"
-        }
+          color:'#000000',
+          fontSize:'16px',
+          fontWeight:'400'
+        }, 
       },
+      //是否显示切换按钮
+      showButton:{
+        type: Boolean,
+        default:false,
+      },
+      //是否显示搜索按钮
+      showSearch:{
+        type: Boolean,
+        default:false,
+      },
+      //是否显示标题
+      showTitle:{
+        type: Boolean,
+        default:false,
+      }
     },
 		data() {
 			return {
@@ -59,6 +83,7 @@
         menuRight: app.globalData.menuRight,
         menuTop: app.globalData.menuTop,
         menuHeight: app.globalData.menuHeight,
+        //用来控制按钮盒子里的css变量的值，默认为0
         btnBoxShadow:'0'
 			};
 		},
@@ -70,11 +95,10 @@
       consumptionMethod:{
         handler(newStr, oldStr) {
           if(newStr === 'waimai'){
-              this.btnBoxShadow ='50%'
-
+            this.btnBoxShadow ='50%'
           }
           else{
-              this.btnBoxShadow ='0'
+            this.btnBoxShadow ='0'
           }
         },
         // 可以控制侦听器自动触发一次 ,默认为false
@@ -120,7 +144,6 @@
       width: 70%;
       // 按钮区域样式
       .btn-box {
-        --btn-box-shadow:0;
         position: relative; 
         box-sizing: border-box;
         background-color: #F0F0F0;
@@ -136,6 +159,7 @@
           width: 50%;
           position: absolute;
           top:0;
+          //--btn-box-shadow是css变量，试图动态控制按钮盒子 的 蓝色伪元素 的左偏移量，通过JS修改
           left:var(--btn-box-shadow,0);
           background-color:#4a90e2 ;
           border-radius: 30rpx;
@@ -145,6 +169,12 @@
           border: none;
           height: 100%;
         }
+      }
+      //标题区域样式
+      .title-box{
+        color: #000000;
+        font-size: 16px;
+        font-weight: 400;
       }
       //搜索区域样式
       .search{
@@ -156,17 +186,5 @@
         text-align: center;
       }
     }
-      
   }
-
-  // .nav-bar .search{ 
-  //   width: 60%; 
-  //   color: #333; 
-  //   font-size: 14px; 
-  //   background: #fff; 
-  //   position: absolute; 
-  //   border-radius: 50px; 
-  //   background: #ddd; 
-  //   padding-left: 14px;
-  // }
 </style>

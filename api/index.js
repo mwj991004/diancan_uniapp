@@ -6,5 +6,5 @@ export default {
   home,
   order,
   ordering,
-  me
+  me,
 }

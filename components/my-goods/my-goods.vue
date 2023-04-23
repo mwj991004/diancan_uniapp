@@ -1,6 +1,6 @@
 <template>
-	<view>
-		<view class="goods-item"  v-if="goods.price">
+	<view v-if="goods.price">
+		<view class="goods-item" >
 		  <!-- 商品左侧图片区域 -->
 		  <view class="goods-item-left">
         <radio :checked="goodsState" color="#C00000" v-if="showRadio" @click="radioClickHandler"></radio>
@@ -47,6 +47,11 @@
         // 如果外界没有指定 show-radio 属性的值，则默认不展示 radio 组件
         default: false,
       },
+      //默认是否选中
+      checked:{
+        type:Boolean,
+        defaul:false
+      }
     },
     filters: {
       // 把数字处理为带两位小数点的数字
@@ -92,17 +97,17 @@
 		},
     methods:{
       //点击uni-tag标签切换规格的处理函数
-      setInverted(tag,i){
+      setInverted(tags,i){
         //1.先把之前激活标签下的商品数量存起来
         let shuzi = this.tag.activeTagNum
         //2.更新激活标签的数量
-        this.tag.activeTagNum = this.sumdata[tag] || 0
+        this.tag.activeTagNum = this.sumdata[tags] || 0
         //3.存旧标签对应的商品数量
         this.sumdata[this.tag.activeTag] = shuzi 
         //4.更新激活标签的索引
         this.tag.activeTagIndex = i
         //5.更新激活标签名称
-        this.tag.activeTag = tag
+        this.tag.activeTag = tags
         //调用更新价格的函数更新一下商品价格
         this.updatePrice()
       },
@@ -110,7 +115,6 @@
       updategoodsinfo(){
         // 查询购物车商品信息
         let findResult =  this.queryCart()
-        // console.log(this.sumdata)
         if(findResult.length !== 0){
           this.tag.activeTag = findResult[findResult.length-1].goods_spec
           this.tag.activeTagIndex = String(this.goods.tagList).split(',').findIndex(item => item == this.tag.activeTag )
@@ -128,18 +132,10 @@
         }
         this.updatePrice()  
       },
-      // 处理根据选中项修改商品单价的函数
-      updatePrice(){
-        if(this.tag.activeTag === '整份'){
-          this.price = this.goods.price*2
-        }
-        else if(this.tag.activeTag === '半份'){
-          this.price = this.goods.price
-        }
-      },
       // radio 组件的点击事件处理函数
       radioClickHandler() {
-        /* // 通过 this.$emit() 触发外界通过 @ 绑定的 radio-change 事件，
+        this.goodsState = !this.goodsState
+        // 通过 this.$emit() 触发外界通过 @ 绑定的 radio-change 事件，
         this.$emit('radio-change', {
           // 商品的 Id
           goods_id: this.goods.id,
@@ -156,22 +152,17 @@
           //商品的规格
           goods_spec:this.tag.activeTag,
           // 商品的最新数量
-          goods_count: +val
-        }) */
+          goods_count:this.tag.activeTagNum
+        })
       },
       // 商品的数量发生了变化
       numberChangeHandler(val) {
-        
-        if(parseInt(val)){
+        // 数量不为0,商品选中
+        if(+val){
           this.goodsState = true
-        }else{
-          this.goodsState = false
         }
         //存激活标签下商品数量
         this.tag.activeTagNum = +val
-
-        
-
         // 通过 this.$emit() 触发外界通过 @ 绑定的 num-change 事件
         this.$emit('num-change',{
           // 商品的 Id
@@ -191,16 +182,23 @@
           // 商品的最新数量
           goods_count: +val
         })
-        console.log("次数")
       },
-      //根据购物车中的cart数据，判断商品有没有添加，如果有，则返回cart中对应的规格和数量信息
+      // 处理根据选中项修改商品单价的函数
+      updatePrice(){
+        if(this.tag.activeTag === '整份'){
+          this.price = this.goods.price*2
+        }
+        else if(this.tag.activeTag === '半份'){
+          this.price = this.goods.price
+        }
+      },
+      //根据购物车中的cart数据，判断商品有没有添加，如果有，则返回cart中对应商品
       queryCart(){
         const findResult = this.cart.filter((x) => {
-          return  x.goods_name=== this.goods.name 
+          return  x.goods_name === this.goods.name 
         })
         return findResult
       }
-    
     },
     watch:{
       // cart:{
@@ -217,9 +215,9 @@
       //   deep: true
       // }
     },
-    mounted(options) {
+    mounted() {
+      this.goodsState = this.checked
       this.updategoodsinfo()
-    	// console.log("页面加载了",options)
     },
     
 	}

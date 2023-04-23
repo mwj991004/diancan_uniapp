@@ -6,6 +6,8 @@ import Vuex from 'vuex'
 import moduleHome from './modules/hmoe.js'
 // 1. 导入点单页购物车的 vuex 模块
 import moduleCart from './modules/cart.js'
+// 导入用户的 vuex 模块
+import moduleUser from './modules/user.js'
 
 Vue.use(Vuex);//vue的插件机制
 
@@ -15,6 +17,8 @@ const store = new Vuex.Store({
   modules: {
     m_home:moduleHome,
     m_cart: moduleCart,
+    // 挂载用户的 vuex 模块，访问路径为 m_user
+    m_user: moduleUser,    
   },
   
 })

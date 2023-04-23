@@ -40,33 +40,7 @@
 		      <!-- 渲染数购物车商品列表 -->
 		      <scroll-view scroll-y="true" class="cart-body" >
 		        <view class="cart-goods-item" v-for="(goods, i) in cart" :key="i">
-		        <!-- 商品左侧图片区域 -->
-		          <view class="cart-goods-left">
-		            <radio class="cart-goods-select" :checked="goods.goods_state" color="#4a90e2"  @click="radioChangeHandler(goods)"></radio>
-		            <image :src="goods.goods_img || defaultPic" class="cart-goods-img"></image>
-		          </view>
-		        
-		          <!-- 商品右侧描述信息区域 -->
-		          <view class="cart-goods-right">
-		            <view class="">
-		              <!-- 商品标题  和商品的规格-->
-		              <view class="cart-goods-name" >{{goods.goods_name}} 【 {{goods.goods_spec}} 】
-		              </view>
-		              <view class="cart-goods-price-box">
-		                <view class="cart-goods-price">
-		                  <text class="price-icon">￥</text>
-		                  <text class="price-text">{{goods.goods_price}}</text>
-		                </view>
-		                <!-- 商品数量 -->
-		                <!-- <uni-number-box class="cart-goods-sum" :value="String(goods.goods_count)" @change="cartNumberChangeHandler($event,goods)"  @click.native.stop=""></uni-number-box> -->
-		              </view>
-		              
-		            </view>
-		            <view class="cart-goods-sum">
-		              X{{goods.goods_count}}
-		            </view>
-		          </view>
-		          
+              <my-small-goods  :showRadio="true" :goods="goods" @num-change="cartNumberChangeHandler($event,goods)"></my-small-goods>
 		        </view>
 		      </scroll-view>
 		    
@@ -88,13 +62,19 @@
 			return {
 				
 				//购物车展示与隐藏
-				goodsCartShow:false
+				goodsCartShow:false,
+        
+        // 未登录时，倒计时跳转到登录的秒数
+        seconds: 3,
+        // 定时器的 Id
+        timer: null
 			};
 		},
     computed:{
       ...mapState('m_home', ['consumptionMethod']),
       ...mapState('m_cart', ['cart']),
-      ...mapGetters('m_cart', ['total','checkedCount','checkedGoodsAmount']),
+      ...mapState('m_user', ['token']),
+      ...mapGetters('m_cart', ['total','checkedCount','checkedGoodsAmount']), 
       // 2. 是否全选
       isFullCheck() {
         return this.total === this.checkedCount
@@ -105,6 +85,8 @@
       
        // 把 m_cart 模块中的 addToCart 方法映射到当前页面使用
       ...mapMutations('m_cart', ['addToCart','updateGoodsState','updateAllGoodsState']),
+      // 把 m_user 模块中的 updateRedirectInfo 方法映射到当前页面中使用
+      ...mapMutations('m_user', ['updateRedirectInfo']),
       //购物车弹出层展示和关闭的函数
       showPopupCart() {
           this.goodsCartShow= !this.goodsCartShow
@@ -114,31 +96,83 @@
       },
       //结算按钮点击事件处理函数
       clickGotoPay(){
+        // 先判断是否勾选了要结算的商品
+        if (!this.checkedCount) return uni.$showMsg('请选择要结算的商品！')
+        // 判断用户是否登录了，如果没有登录，则调用 delayNavigate() 进行倒计时的导航跳转
+        if (!this.token) return this.delayNavigate()
         uni.navigateTo({
-          url:'../../subpkg/pay/pay'
+          url:'../../subpkg/pay/pay', 
         })
       },
       //购物车模块商品的数量发生了变化的处理函数
       cartNumberChangeHandler(val,goods){
       
-          goods.goods_count = +val
-          
-          this.addToCart(goods)
-        
+        goods.goods_count = +val
+        // 判断一下商品数量信息
+        if(!goods.goods_count){
+          //数量为0，删除购物车对应商品
+          this.removeGoods(goods)
+        }else{
+          //数量不为0，添加商品进购物车
+          // 通过 this 调用映射过来的 addToCart 方法，把商品信息对象存储到购物车中
+          this.addToCart(e)
+        }
         // 设置数字徽标
         this.setBadge()
       },
-      // 商品的勾选状态发生了变化的处理函数
-      radioChangeHandler(goods) {
-        goods.goods_state = !goods.goods_state
-        this.updateGoodsState(goods)
-      },
+     
       // 全选按钮 的点击事件处理函数
-        changeAllState() {
-          // 修改购物车中所有商品的选中状态
-          // !this.isFullCheck 表示：当前全选按钮的状态取反之后，就是最新的勾选状态
-          this.updateAllGoodsState(!this.isFullCheck)
-        }
+      changeAllState() {
+        // 修改购物车中所有商品的选中状态
+        // !this.isFullCheck 表示：当前全选按钮的状态取反之后，就是最新的勾选状态
+        this.updateAllGoodsState(!this.isFullCheck)
+      },
+      // 展示倒计时的提示消息
+      showTips(n) {
+        // 调用 uni.showToast() 方法，展示提示消息
+        uni.showToast({
+          // 不展示任何图标
+          icon: 'none',
+          // 提示的消息
+          title: '请登录后再结算！' + n + ' 秒后自动跳转到登录页',
+          // 为页面添加透明遮罩，防止点击穿透
+          mask: true,
+          // 1.5 秒后自动消失
+          duration: 1500
+        })
+      },
+      // 延迟导航到 my 页面
+      delayNavigate() {
+        // 把 data 中的秒数重置成 3 秒
+        this.seconds = 3
+        this.showTips(this.seconds)  
+        // 1. 将定时器的 Id 存储到 timer 中
+        this.timer = setInterval(() => {
+          this.seconds--   
+          // 2. 判断秒数是否 <= 0
+          if (this.seconds <= 0) {
+            // 2.1 清除定时器
+            clearInterval(this.timer)
+            // 2.2 跳转到 my 页面
+            uni.switchTab({
+              url: '/pages/me/me',
+              // 页面跳转成功之后的回调函数
+              success: () => {
+                // 调用 vuex 的 updateRedirectInfo 方法，把跳转信息存储到 Store 中
+                this.updateRedirectInfo({
+                  // 跳转的方式
+                  openType: 'switchTab',
+                  // 从哪个页面跳转过去的
+                  from: '/pages/ordering/ordering'
+                })
+              }            
+            })
+            // 2.3 终止后续代码的运行（当秒数为 0 时，不再展示 toast 提示消息）
+            return
+          }
+          this.showTips(this.seconds)
+        }, 1000)
+      },
     }
 	}
 </script>
@@ -220,63 +254,6 @@
       .cart-body{
         padding: 5px 0;
         max-height: 400rpx;
-        .cart-goods-item{
-          margin: 0 20px;
-          padding: 8px 0;
-          display: flex;
-          align-items: center;
-        .cart-goods-left{
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-            .cart-goods-select{
-              
-            }
-            .cart-goods-img{
-              
-              width: 60px;
-              height: 60px;
-              border-radius: 10px;
-            }
-          }
-        }
-        .cart-goods-right{
-          align-self: stretch;
-          flex: 1;
-          margin:0 15px 5px;
-          display: flex;
-          // flex-direction: column;
-          justify-content: space-between;
-          // align-items: flex-start;
-          align-items: center;
-          .cart-goods-name{
-            font-size: 16px;
-          }
-          .cart-goods-price-box{
-            margin-top: 10px;
-            align-self: stretch;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            .cart-goods-price{
-              font-weight: 700;
-              color: red;
-              .price-text{
-                font-size: 20px;
-              }
-              .price-icon{
-                font-size:18px;
-              }
-            }
-           
-          }
-          .cart-goods-sum{
-            margin-right: 15px;
-            font-size: 20px;
-            color: #000000;
-            font-style: italic;
-          } 
-        }
       }
     }
   }

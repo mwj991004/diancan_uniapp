@@ -36,10 +36,10 @@
         <view class="banner-title-h1">
           美食人气榜
         </view>
-        <view class="banner-title-btn">
+        <!-- <view class="banner-title-btn" @click="clickBannerMore">
           更多
           <uni-icons type="forward" size="20"></uni-icons>
-        </view>
+        </view> -->
       </view>
       <!-- 内容 -->
       <view class="banner-list">
@@ -105,15 +105,18 @@
          // 3.3 请求成功，为 data 中的数据赋值
          this.swiperList = res.message
        },*/
-        ...mapMutations('m_home', ['updateConsumptionMethod']),
-        // btn-item被点击时候的事件处理函数
-        btnClickHandler(str) {
-           this.updateConsumptionMethod(str)
-          uni.switchTab({
-            url: '/pages/ordering/ordering'
-          })
-        }
-     }, 
+      ...mapMutations('m_home', ['updateConsumptionMethod']),
+      // btn-item被点击时候的事件处理函数
+      btnClickHandler(str) {
+        this.updateConsumptionMethod(str)
+        uni.switchTab({
+          url: '/pages/ordering/ordering'
+        })
+      },
+      clickBannerMore(){
+        return uni.$showMsg('暂时没有，敬请期待~')
+      }
+    }, 
 	}
 </script>
 

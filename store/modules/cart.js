@@ -12,32 +12,49 @@ export default {
 
   // 模块的 mutations 方法
   mutations: {
+    // 加入购物车
     addToCart(state, goods) {
       // 根据提交的商品的Id，查询购物车中是否存在这件商品
-      // 如果不存在，则 findResult 为 undefined；否则，为查找到的商品信息对象
       const findResult = state.cart.find((x) => {
-      return  x.goods_id === goods.goods_id && x.goods_spec ===goods.goods_spec
+        return  x.goods_id === goods.goods_id && x.goods_spec ===goods.goods_spec
       })
-      if (!findResult) {
-        // 如果购物车中没有这件商品，则直接 push
+      // 如果购物车中没有这件商品，则是添加操作
+      if (!findResult ) {
         state.cart.push(goods)
       } else {
-        // 如果购物车中有这件商品，则只更新数量即可
+        // 如果购物车中有这件商品，则更新商品数量
         findResult.goods_count = goods.goods_count
       }
-      //判断数量是否为0
-      if(findResult && !findResult.goods_count){
-         // _removeGoods(state,findResult)
-         this.commit('m_cart/_removeGoods',findResult)
-      }else{
-        // 通过 commit 方法，调用 m_cart 命名空间下的 saveToStorage 方法
+      // 通过 commit 方法，调用 m_cart 命名空间下的 saveToStorage 方法
+      this.commit('m_cart/saveToStorage')
+    },
+    
+    // 更新购物车中商品的数量
+    updateGoodsCount(state, goods) {
+      const findResult = state.cart.find((x) => {
+        return  x.goods_id === goods.goods_id && x.goods_spec ===goods.goods_spec
+      }) 
+      if(findResult) {
+        // 更新对应商品的数量
+        findResult.goods_count = goods.goods_count  
+        //通过 commit 方法，调用 m_cart 命名空间下的 saveToStorage 方法
         this.commit('m_cart/saveToStorage')
       }
     },
+    //从购物车中删除对应的商品信息
+    removeGoods(state, goods) {
+      // 调用数组的 filter 方法进行过滤
+      state.cart = state.cart.filter(x => {
+        return x.goods_id !== goods.goods_id || x.goods_spec !== goods.goods_spec})
+      // 持久化存储到本地
+      this.commit('m_cart/saveToStorage')
+    },
+    
     // 更新购物车中商品的勾选状态
     updateGoodsState(state, goods) {
       const findResult = state.cart.find((x) => {
-      return  x.goods_id === goods.goods_id && x.goods_spec ===goods.goods_spec})  
+        return  x.goods_id === goods.goods_id && x.goods_spec ===goods.goods_spec
+      })  
     
       // 有对应的商品信息对象
       if (findResult) {
@@ -48,33 +65,6 @@ export default {
       }
     },
     
-    // 更新购物车中商品的数量
-    updateGoodsCount(state, goods) {
-      const findResult = state.cart.find((x) => {
-      return  x.goods_id === goods.goods_id && x.goods_spec ===goods.goods_spec}) 
-    
-      if(findResult) {
-        // 更新对应商品的数量
-        findResult.goods_count = goods.goods_count
-        
-        //判断数量是否为0
-        if(!findResult.goods_count){
-           // _removeGoods(state,findResult)
-           this.commit('m_cart/_removeGoods',findResult)
-           
-        }else{
-          // 通过 commit 方法，调用 m_cart 命名空间下的 saveToStorage 方法
-          this.commit('m_cart/saveToStorage')
-        }
-      }
-    },
-    // 根据从购物车中删除对应的商品信息
-    _removeGoods(state, good) {
-      // 调用数组的 filter 方法进行过滤
-      state.cart = state.cart.filter(x => x !== good)
-      // 持久化存储到本地
-      this.commit('m_cart/saveToStorage')
-    },
     // 更新所有商品的勾选状态
     updateAllGoodsState(state, newState) {
       // 循环更新购物车中每件商品的勾选状态
@@ -98,6 +88,10 @@ export default {
       // 循环统计商品的数量，累加到变量 c 中
       state.cart.forEach(goods => c += goods.goods_count)
       return c
+    },
+    //勾选的商品
+    checkedGoods(state){
+      return state.cart.filter(x => x.goods_state)
     },
     // 勾选的商品的总数量
     checkedCount(state) {

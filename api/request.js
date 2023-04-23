@@ -1,3 +1,4 @@
+import store from '@/store/store.js'
 class Request {
   constructor(options = {}) {
     // 请求的根路径
@@ -72,12 +73,20 @@ class Request {
 
 export const $http = new Request({
   baseUrl:'http://127.0.0.1:8000',
-  beforeRequest () {
+  beforeRequest (options) {
     uni.showLoading({
       title: '数据加载中...',
     })
+    // 判断请求的是否为有权限的 API 接口
+    if (options.url.indexOf('/me/') !== -1) {
+      // 为请求头添加身份认证字段
+      options.header = {
+        // 字段的值可以直接从 vuex 中进行获取
+        Authorization: store.state.m_user.token,
+      }
+    }  
   },
-  afterRequest() {
+  afterRequest(options) {
     uni.hideLoading()
   }
 })

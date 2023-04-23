@@ -1,16 +1,16 @@
 <template>
 	<view>
     <!-- 自定义的navgation导航栏 -->
-    <my-navgation-bar  :default-data="defaultData"></my-navgation-bar>
+    <my-navgation-bar  :default-data="defaultData" :showButton="true" :showSearch="true"></my-navgation-bar>
     <!-- 门店信息区域 -->
     
     
     <!-- 商品区域 -->
     <view class="scroll-view-container">
       <!-- 左侧的商品分类区域 -->
-      <scroll-view  class="left-scroll-view" 	:show-scrollbar="false" 	:enhanced="true" :scroll-y="true" scroll-with-animation :style="{height: wh + 'px'}" :scroll-top="cateScrollTops">   
-        <block v-for="(item,i) in goodsCateList" :key="i">
-          <view  :class="['left-scroll-view-item', {'active':i === active} ]"  @click="activeChanged(i)" >{{item.title}}</view>
+      <scroll-view  class="left-scroll-view" 	:show-scrollbar="false" 	:enhanced="true" :scroll-y="true" scroll-with-animation :style="{height: wh + 'px'}"  :scroll-into-view="leftScroll">   
+        <block v-for="(item,i) in goodsCateList" :key="item.id">
+          <view  :class="['left-scroll-view-item', {'active':item.id === active} ]" :id="'leftScroll-' + item.id" @click="activeChanged(item.id)" >{{item.title}}</view>
         </block>
         <!-- 空白盒子，让最后一个分类盒子也能往上滚 -->
         <view class="left-scroll-view-item">
@@ -18,17 +18,17 @@
         </view>
       </scroll-view >
       <!-- 右侧的商品列表区域 -->
-      <scroll-view class="right-scroll-view " :show-scrollbar="false" 	:enhanced="true" :scroll-y="true" :style="{height: wh + 'px'}" scroll-with-animation :scroll-into-view="'scroll-' + rightCur" @scroll="scrollLink" >
+      <scroll-view class="right-scroll-view " :show-scrollbar="false" 	:enhanced="true" :scroll-y="true" :style="{height: wh + 'px'}" scroll-with-animation :scroll-into-view="rightScroll" @scroll="scrollLink" >
         <!-- 分类商品盒子 -->
-        <view class="cate-box" v-for="(item2, i2) in goodsCateList" :id="'scroll-' + i2"  :key="i2">
+        <view class="cate-box" v-for="(item2, i2) in goodsCateList" :id="'rightScroll-' + item2.id"  :key="item2.id">
           <!-- 商品分类 -->
           <view class="cate-box-title">{{item2.title}}</view>
           <!-- 商品列表内容-->
           <view class="goods-list" >
             <!-- 商品item项 -->
-            <view v-for="(item3,i3) in goodsInfoList " :key="i3" :id="'scroll-' + i2 + '-' + i3"   v-if="item3.cate_id === item2.id ? true : false ">
+            <view v-for="(item3,i3) in goodsInfoList " :key="item2.id" :id="'scroll-' + item2.id + '-' + i3"   v-if="item3.cate_id === item2.id ? true : false ">
               <!-- 为 my-goods 组件动态绑定 goods 属性的值 -->
-              <my-goods :goods="item3"  @num-change="numberChangeHandler"></my-goods>
+              <my-goods  :goods="item3"  @num-change="numberChangeHandler"></my-goods>
             </view>
           </view>
         </view>
@@ -42,14 +42,13 @@
     
     <!-- 购物车区域 -->
     <my-cart></my-cart>
-    </view>
+    
+  </view>
 </template>
 
 <script>
- 
-  const app = getApp();
+
   import { mapState, mapMutations,mapGetters} from 'vuex'
-  
   // 导入自己封装的 mixin 模块
   import badgeMix from '@/mixins/tabbar-badge.js'
   
@@ -61,15 +60,17 @@
     },
 		data() {
 			return {
-				// 组件参数设置，传递到组件
+				// 自定义导航栏组件参数设置，传递到组件，设置标题
 				defaultData: {
-				  title: "我主页", // 导航栏标题
+				  title: "点单", // 导航栏标题
+          color:"#4a90e2",
+          fontSize:'16'
 				},
         // 窗口的可用高度 = 屏幕高度 - navigationBar高度 - tabBar 高度
         wh: 0, 
         // 当前选中项的索引，默认让第一项被选中
-        active: 0,
-        rightCur: 5, // 用于实现左边联动右边
+        active: 1,
+        rightCur: 1, // 用于实现左边联动右边
         //分类栏滚动位置
         cateScrollTops:0,
         //商品分类数据
@@ -84,7 +85,13 @@
         // ...mapState('模块的名称', ['要映射的数据名称1', '要映射的数据名称2'])
         ...mapState('m_home', ['consumptionMethod']),
         ...mapState('m_cart', ['cart']),
-        ...mapGetters('m_cart', ['total'])
+        ...mapGetters('m_cart', ['total']),
+        leftScroll:function(){
+          return 'leftScroll-' + this.active
+        },
+        rightScroll:function(){
+          return 'rightScroll-' + this.rightCur
+        },
       
     },
     methods:{
@@ -92,18 +99,18 @@
       ...mapMutations('m_home', ['updateConsumptionMethod']),
       
        // 把 m_cart 模块中的 addToCart 方法映射到当前页面使用
-      ...mapMutations('m_cart', ['addToCart','updateGoodsState']),
+      ...mapMutations('m_cart', ['addToCart','removeGoods']),
       // 分类栏click事件处理函数
       activeChanged(i) {
           this.active = i
           this.rightCur = i
       },
-      // 点击商品跳转到商品详情页面
+     /* // 点击商品跳转到商品详情页面
       gotoGoodsDetail(item3) {
         uni.navigateTo({
            url: '/subpkg/goods_detail/goods_detail?goods_id=' + item3.id
         })
-      },
+      }, */
       //右侧滚动函数，根据滚动的距离，算出左侧active项
       scrollLink(e) {
         let that = this
@@ -111,7 +118,7 @@
         let itemHeight = 0;
         list.forEach((item,i) => {
           //拿到每个元素
-          let els = wx.createSelectorQuery().select("#scroll-" + i);
+          let els = wx.createSelectorQuery().select("#rightScroll-" + item.id);
           els.fields({size: true }, function (res) {
             list[i].top = itemHeight;
             itemHeight += res.height;
@@ -122,28 +129,31 @@
         let scrollTop = e.detail.scrollTop;
         list.some((item,i) => {
           if (scrollTop > list[i].top && scrollTop < list[i].bottom) {
-            this.active = i
-            //让分类栏也滚动起来
-            this.cateScrollTops = this.active*50 -20
+            this.active = item.id
             return true
           }
         })
       },
       // 点单页商品的数量发生了变化的处理函数
       numberChangeHandler(e){
-        
+        // 判断一下商品数量信息
+        if(!e.goods_count){
+          //数量为0，删除购物车对应商品
+          this.removeGoods(e)
+        }else{
+          //数量不为0，添加商品进购物车
           // 通过 this 调用映射过来的 addToCart 方法，把商品信息对象存储到购物车中
           this.addToCart(e)
+        }
         // 设置数字徽标
         this.setBadge()
       },
       
     },
     onLoad(options) {
-      
-      if(options){
-        // this.rightCur = options.cate_id+'-'options.goods_id
-      }
+      this.active = options.cate_id
+      this.rightCur = options.cate_id
+         
       // 获取当前系统的信息
       const sysInfo = uni.getSystemInfoSync()
       //获取胶囊布局信息
@@ -173,6 +183,7 @@
   //     height: 0;
   //     color: transparent;   
   // }
+  // 商品列表区域的样式
   .scroll-view-container {
     display: flex;
   
