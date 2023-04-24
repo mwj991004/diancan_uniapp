@@ -13,7 +13,7 @@
       </view>
       
     </view>
-    
+    <van-empty description="空空如也~" v-if = "checkedGoods.length === 0" />
     <!-- 结算区域 -->
     <my-settle></my-settle>
 

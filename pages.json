@@ -16,6 +16,7 @@
             "path" : "pages/order/order",
             "style" : {
               "navigationBarTitleText": "我的订单"
+              
             }
         }
         ,{
@@ -49,6 +50,7 @@
                     "path" : "address/address",
                     "style" : {}
                 }
+                
             ]
     }
   ],  
@@ -97,7 +99,10 @@
       "van-field": "/wxcomponents/vant/dist/field/index",
       "van-radio": "/wxcomponents/vant/dist/radio/index",
       "van-radio-group": "/wxcomponents/vant/dist/radio-group/index",
-      "van-datetime-picker": "/wxcomponents/vant/dist/datetime-picker/index"
+      "van-datetime-picker": "/wxcomponents/vant/dist/datetime-picker/index",
+      "van-tab": "/wxcomponents/vant/dist/tab/index",
+      "van-tabs": "/wxcomponents/vant/dist/tabs/index",
+      "van-empty": "/wxcomponents/vant/dist/empty/index"
       
     }
 	}

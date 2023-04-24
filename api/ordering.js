@@ -7,7 +7,7 @@ export default  {
     const { data: res } = await $http.get('/miniprogram/api/ordering/goodscatedata')
      // 3.2 请求失败
       if (res.meta.status !== 200) {
-        uni.$showMsg()
+        uni.$showMsg(res.meta.msg)
         return
       }
       // 3.3 请求成功，返回数据
@@ -18,7 +18,7 @@ export default  {
     const { data: res } = await $http.get('/miniprogram/api/ordering/goodsinfodata')
    // 3.2 请求失败
     if (res.meta.status !== 200) {
-      uni.$showMsg()
+      uni.$showMsg(res.meta.msg)
       return
     }
     // 3.3 请求成功，返回数据

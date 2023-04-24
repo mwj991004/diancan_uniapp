@@ -76,6 +76,10 @@ export default {
     // 将购物车中的数据持久化存储到本地
     saveToStorage(state) {
        uni.setStorageSync('cart', JSON.stringify(state.cart))
+    },
+    delCart(state) {
+      state.cart = [],
+      uni.removeStorageSync('cart')
     }
   },
   
